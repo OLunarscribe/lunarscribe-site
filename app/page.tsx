@@ -1,4 +1,11 @@
 import Hero from "@/components/landing/Hero";
+import TrustLogos from "@/components/landing/TrustLogos";
+
+<main className="relative z-10">
+  <Hero />
+  <TrustLogos />
+</main>
+
 
 export default function Page() {
   return (
