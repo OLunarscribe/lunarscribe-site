@@ -1,3 +1,4 @@
+import Navbar from "@/components/landing/Navbar";
 import Hero from "@/components/landing/Hero";
 import TrustLogos from "@/components/landing/TrustLogos";
 import Benefits from "@/components/landing/Benefits";
@@ -12,7 +13,7 @@ import Footer from "@/components/landing/Footer";
 export default function Page() {
   return (
     <div className="min-h-screen bg-[#05010f] text-white">
-      {/* Background */}
+      {/* Background glow */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-purple-600/25 blur-3xl" />
         <div className="absolute top-24 -left-24 h-[420px] w-[420px] rounded-full bg-fuchsia-500/15 blur-3xl" />
@@ -20,6 +21,7 @@ export default function Page() {
       </div>
 
       <main className="relative z-10">
+        <Navbar />
         <Hero />
         <TrustLogos />
         <Benefits />
