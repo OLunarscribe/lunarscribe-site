@@ -1,5 +1,10 @@
 import Hero from "@/components/landing/Hero";
 import TrustLogos from "@/components/landing/TrustLogos";
+import Benefits from "@/components/landing/Benefits";
+
+<Hero />
+<TrustLogos />
+<Benefits />
 
 <main className="relative z-10">
   <Hero />
