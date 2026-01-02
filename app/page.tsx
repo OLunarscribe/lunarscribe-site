@@ -2,16 +2,6 @@ import Hero from "@/components/landing/Hero";
 import TrustLogos from "@/components/landing/TrustLogos";
 import Benefits from "@/components/landing/Benefits";
 
-<Hero />
-<TrustLogos />
-<Benefits />
-
-<main className="relative z-10">
-  <Hero />
-  <TrustLogos />
-</main>
-
-
 export default function Page() {
   return (
     <div className="min-h-screen bg-[#05010f] text-white">
@@ -23,7 +13,8 @@ export default function Page() {
 
       <main className="relative z-10">
         <Hero />
-        {/* next: TrustLogos, Benefits, etc. can be extracted the same way */}
+        <TrustLogos />
+        <Benefits />
       </main>
     </div>
   );
