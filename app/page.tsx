@@ -1,10 +1,18 @@
 import Hero from "@/components/landing/Hero";
 import TrustLogos from "@/components/landing/TrustLogos";
 import Benefits from "@/components/landing/Benefits";
+import Process from "@/components/landing/Process";
+import Features from "@/components/landing/Features";
+import Pricing from "@/components/landing/Pricing";
+import Testimonials from "@/components/landing/Testimonials";
+import FAQ from "@/components/landing/FAQ";
+import CTA from "@/components/landing/CTA";
+import Footer from "@/components/landing/Footer";
 
 export default function Page() {
   return (
     <div className="min-h-screen bg-[#05010f] text-white">
+      {/* Background */}
       <div className="pointer-events-none fixed inset-0 overflow-hidden">
         <div className="absolute -top-40 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-purple-600/25 blur-3xl" />
         <div className="absolute top-24 -left-24 h-[420px] w-[420px] rounded-full bg-fuchsia-500/15 blur-3xl" />
@@ -15,6 +23,13 @@ export default function Page() {
         <Hero />
         <TrustLogos />
         <Benefits />
+        <Process />
+        <Features />
+        <Pricing />
+        <Testimonials />
+        <FAQ />
+        <CTA />
+        <Footer />
       </main>
     </div>
   );
