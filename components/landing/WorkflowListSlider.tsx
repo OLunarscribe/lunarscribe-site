@@ -52,23 +52,30 @@ export default function WorkflowListSlider() {
   const items = tab === "all" ? allTasks : waitingForApproval;
 
   // ----- CAROUSEL CONFIG -----
-  const ROW_H = 72;          // row height in px (matches your design)
-  const ROW_GAP = 8;         // gap between rows in px (gap-2)
+  const ROW_H = 72;   // row height in px (matches your design)
+  const ROW_GAP = 8;  // gap between rows in px (gap-2)
   const VISIBLE_ROWS = 4;
 
   // For a seamless loop, we render items twice.
   const loopItems = useMemo(() => [...items, ...items], [items]);
 
   // Total distance to scroll before looping (one full "set" of items).
-  const distance = items.length * (ROW_H + ROW_GAP);
+  // NOTE: gap exists between items, so it's (n-1) gaps, not n gaps.
+  const distance = items.length * ROW_H + Math.max(0, items.length - 1) * ROW_GAP;
 
-  // Tune speed here (px per second)
-  const PX_PER_SEC = 28; // lower = slower, higher = faster
+  // Tune speed here (px per second) — higher = faster (more obvious)
+  const PX_PER_SEC = 110;
   const duration = Math.max(6, distance / PX_PER_SEC);
+
+  // Force animation on for debugging (set to false when confirmed)
+  const FORCE_ANIMATE = false;
+
+  const shouldAnimate =
+    (FORCE_ANIMATE || !reduceMotion) && items.length > VISIBLE_ROWS;
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl shadow-purple-900/20">
-      {/* HEADER (STATIC - AS YOU WANTED) */}
+      {/* HEADER (STATIC) */}
       <div className="flex items-center justify-between">
         <div className="inline-flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-purple-500/15 ring-1 ring-white/10">
@@ -80,14 +87,13 @@ export default function WorkflowListSlider() {
           </div>
         </div>
 
-        {/* Keep arrows for UI parity (optional / decorative) */}
+        {/* Arrows (optional). They just nudge a scroll container if you want. */}
         <div className="flex items-center gap-2">
           <button
             type="button"
             className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10"
             aria-label="Scroll up"
             onClick={() => {
-              // Optional: small nudge effect (non-essential)
               const el = document.getElementById("workflow-marquee");
               if (el) el.scrollTop -= (ROW_H + ROW_GAP);
             }}
@@ -133,13 +139,14 @@ export default function WorkflowListSlider() {
       {/* TASK LIST (INFINITE NONSTOP CAROUSEL) */}
       <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-2">
         <div
+          id="workflow-marquee"
           className="relative overflow-hidden rounded-xl"
           style={{ height: ROW_H * VISIBLE_ROWS }}
         >
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30" />
 
-          {reduceMotion || items.length <= VISIBLE_ROWS ? (
-            // Reduced motion (or too few items): render normally, no marquee
+          {!shouldAnimate ? (
+            // Reduced motion or too few items: render normally
             <div className="flex flex-col gap-2">
               {items.map((t, idx) => (
                 <div
@@ -168,6 +175,7 @@ export default function WorkflowListSlider() {
             <motion.div
               key={`${tab}-${items.length}`} // restart animation when tab changes
               className="flex flex-col gap-2"
+              initial={{ y: 0 }}
               animate={{ y: [0, -distance] }}
               transition={{
                 duration,
