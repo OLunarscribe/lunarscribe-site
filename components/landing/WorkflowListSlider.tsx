@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import {
   Sparkles,
@@ -37,19 +37,6 @@ function StatusIcon({ status }: { status: TaskStatus }) {
 export default function WorkflowListSlider() {
   const reduceMotion = useReducedMotion();
 
-  /* ---------- HEADER CAROUSEL ---------- */
-  const headerPhrases = [
-    "workflow automation",
-    "task orchestration",
-    "handoff routing",
-    "approval tracking",
-    "ops control tower",
-  ];
-
-  const HEADER_ROW_H = 18; // px
-  const headerLoopDistance = HEADER_ROW_H * headerPhrases.length;
-
-  /* ---------- TASK DATA ---------- */
   const allTasks: TaskItem[] = [
     { title: "Payroll management", subtitle: "Due on 2nd July", icon: <DollarSign className="h-4 w-4 text-white/80" />, status: "waiting" },
     { title: "Employee Tracking", subtitle: "2 days ago", icon: <Users2 className="h-4 w-4 text-white/80" />, status: "done" },
@@ -64,105 +51,78 @@ export default function WorkflowListSlider() {
   const [tab, setTab] = useState<"all" | "waiting">("all");
   const items = tab === "all" ? allTasks : waitingForApproval;
 
-  const [index, setIndex] = useState(0);
-
-  const ROW_H = 72;
+  // ----- CAROUSEL CONFIG -----
+  const ROW_H = 72;          // row height in px (matches your design)
+  const ROW_GAP = 8;         // gap between rows in px (gap-2)
   const VISIBLE_ROWS = 4;
 
-  useEffect(() => setIndex(0), [tab]);
+  // For a seamless loop, we render items twice.
+  const loopItems = useMemo(() => [...items, ...items], [items]);
 
-  useEffect(() => {
-    if (items.length <= VISIBLE_ROWS) return;
-    const t = window.setInterval(() => {
-      setIndex((i) => {
-        const maxIndex = items.length - VISIBLE_ROWS;
-        return i + 1 > maxIndex ? 0 : i + 1;
-      });
-    }, 3500);
-    return () => window.clearInterval(t);
-  }, [items.length]);
+  // Total distance to scroll before looping (one full "set" of items).
+  const distance = items.length * (ROW_H + ROW_GAP);
 
-  const maxIndex = Math.max(0, items.length - VISIBLE_ROWS);
-
-  const up = () => setIndex((i) => Math.max(0, i - 1));
-  const down = () => setIndex((i) => Math.min(maxIndex, i + 1));
+  // Tune speed here (px per second)
+  const PX_PER_SEC = 28; // lower = slower, higher = faster
+  const duration = Math.max(6, distance / PX_PER_SEC);
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl shadow-purple-900/20">
-      {/* ---------- HEADER ---------- */}
+      {/* HEADER (STATIC - AS YOU WANTED) */}
       <div className="flex items-center justify-between">
         <div className="inline-flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-purple-500/15 ring-1 ring-white/10">
             <Sparkles className="h-4 w-4" />
           </div>
-
           <div>
-            <div className="text-sm font-semibold flex items-center gap-1">
-              <div className="relative h-[18px] overflow-hidden">
-                {reduceMotion ? (
-                  <div className="h-[18px] leading-[18px]">
-                    workflow automation
-                  </div>
-                ) : (
-                  <motion.div
-                    className="flex flex-col"
-                    animate={{ y: [0, -headerLoopDistance] }}
-                    transition={{
-                      duration: headerPhrases.length * 1.2,
-                      ease: "linear",
-                      repeat: Infinity,
-                    }}
-                  >
-                    {[...headerPhrases, ...headerPhrases].map((text, i) => (
-                      <div
-                        key={`${text}-${i}`}
-                        className="h-[18px] leading-[18px]"
-                      >
-                        {text}
-                      </div>
-                    ))}
-                  </motion.div>
-                )}
-              </div>
-
-              <span className="text-white/70">· Primary</span>
-            </div>
-
+            <div className="text-sm font-semibold">workflow automation · Primary</div>
             <div className="text-xs text-white/60">Live task flow</div>
           </div>
         </div>
 
+        {/* Keep arrows for UI parity (optional / decorative) */}
         <div className="flex items-center gap-2">
           <button
-            onClick={up}
-            disabled={index === 0}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-40"
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10"
+            aria-label="Scroll up"
+            onClick={() => {
+              // Optional: small nudge effect (non-essential)
+              const el = document.getElementById("workflow-marquee");
+              if (el) el.scrollTop -= (ROW_H + ROW_GAP);
+            }}
           >
             <ChevronUp className="h-4 w-4" />
           </button>
           <button
-            onClick={down}
-            disabled={index === maxIndex}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-40"
+            type="button"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10"
+            aria-label="Scroll down"
+            onClick={() => {
+              const el = document.getElementById("workflow-marquee");
+              if (el) el.scrollTop += (ROW_H + ROW_GAP);
+            }}
           >
             <ChevronDown className="h-4 w-4" />
           </button>
         </div>
       </div>
 
-      {/* ---------- TABS ---------- */}
+      {/* TABS */}
       <div className="mt-4 flex w-full items-center gap-2 rounded-2xl border border-white/10 bg-black/20 p-1">
         <button
+          type="button"
           onClick={() => setTab("all")}
-          className={`flex-1 rounded-xl px-3 py-2 text-sm ${
+          className={`flex-1 rounded-xl px-3 py-2 text-sm transition ${
             tab === "all" ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
           }`}
         >
           All Tasks
         </button>
         <button
+          type="button"
           onClick={() => setTab("waiting")}
-          className={`flex-1 rounded-xl px-3 py-2 text-sm ${
+          className={`flex-1 rounded-xl px-3 py-2 text-sm transition ${
             tab === "waiting" ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
           }`}
         >
@@ -170,7 +130,7 @@ export default function WorkflowListSlider() {
         </button>
       </div>
 
-      {/* ---------- TASK LIST ---------- */}
+      {/* TASK LIST (INFINITE NONSTOP CAROUSEL) */}
       <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-2">
         <div
           className="relative overflow-hidden rounded-xl"
@@ -178,33 +138,70 @@ export default function WorkflowListSlider() {
         >
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30" />
 
-          <motion.div
-            animate={{ y: -index * ROW_H }}
-            transition={{ type: "spring", stiffness: 280, damping: 28 }}
-          >
-            {items.map((t, idx) => (
-              <div
-                key={`${t.title}-${idx}-${tab}`}
-                className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4"
-                style={{ height: ROW_H, marginBottom: 8 }}
-              >
-                <div className="flex items-start gap-3">
-                  <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-black/30 ring-1 ring-white/10">
-                    {t.icon}
+          {reduceMotion || items.length <= VISIBLE_ROWS ? (
+            // Reduced motion (or too few items): render normally, no marquee
+            <div className="flex flex-col gap-2">
+              {items.map((t, idx) => (
+                <div
+                  key={`${t.title}-${idx}-${tab}`}
+                  className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4"
+                  style={{ height: ROW_H }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-black/30 ring-1 ring-white/10">
+                      {t.icon}
+                    </div>
+                    <div className="leading-tight">
+                      <div className="text-sm font-semibold">{t.title}</div>
+                      <div className="mt-1 text-xs text-white/60">{t.subtitle}</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className="text-sm font-semibold">{t.title}</div>
-                    <div className="mt-1 text-xs text-white/60">{t.subtitle}</div>
+
+                  <div className="flex items-center gap-2">
+                    <StatusIcon status={t.status} />
                   </div>
                 </div>
-                <StatusIcon status={t.status} />
-              </div>
-            ))}
-          </motion.div>
+              ))}
+            </div>
+          ) : (
+            // Infinite marquee: duplicate list and translate continuously
+            <motion.div
+              key={`${tab}-${items.length}`} // restart animation when tab changes
+              className="flex flex-col gap-2"
+              animate={{ y: [0, -distance] }}
+              transition={{
+                duration,
+                ease: "linear",
+                repeat: Infinity,
+              }}
+            >
+              {loopItems.map((t, idx) => (
+                <div
+                  key={`${t.title}-${idx}-${tab}-loop`}
+                  className="flex items-center justify-between rounded-xl border border-white/10 bg-white/5 px-4"
+                  style={{ height: ROW_H }}
+                >
+                  <div className="flex items-start gap-3">
+                    <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-black/30 ring-1 ring-white/10">
+                      {t.icon}
+                    </div>
+                    <div className="leading-tight">
+                      <div className="text-sm font-semibold">{t.title}</div>
+                      <div className="mt-1 text-xs text-white/60">{t.subtitle}</div>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    <StatusIcon status={t.status} />
+                  </div>
+                </div>
+              ))}
+            </motion.div>
+          )}
         </div>
       </div>
 
-      {/* ---------- FOOTER ---------- */}
+      {/* FOOTER */}
       <div className="mt-3 flex items-center justify-between text-[11px] text-white/60">
         <span>
           Showing <span className="text-white/80">{VISIBLE_ROWS}</span> of{" "}
