@@ -1,13 +1,6 @@
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  Zap,
-  Link2,
-  Clock,
-  Shield,
-  FileDown,
-  Mail,
-} from "lucide-react";
+import { Zap, Link2, Clock, Shield, FileDown, Mail } from "lucide-react";
 
 export default function Features() {
   const features = [
@@ -51,11 +44,9 @@ export default function Features() {
             Features
           </h2>
           <p className="mt-2 max-w-2xl text-white/70">
-            Everything you need to run execution: visibility, structure,
-            automation, and trusted exports.
+            Everything you need to run execution: visibility, structure, automation, and trusted exports.
           </p>
         </div>
-
         <Badge className="w-fit bg-white/10 text-white/70 hover:bg-white/10">
           Built for ops
         </Badge>
@@ -63,10 +54,7 @@ export default function Features() {
 
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         {features.map((f) => (
-          <Card
-            key={f.title}
-            className="rounded-3xl border-white/10 bg-white/5 text-white"
-          >
+          <Card key={f.title} className="rounded-3xl border-white/10 bg-white/5 text-white">
             <CardHeader>
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-purple-500/15 ring-1 ring-white/10">

@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
   Sparkles,
   ChevronUp,
@@ -35,6 +35,21 @@ function StatusIcon({ status }: { status: TaskStatus }) {
 }
 
 export default function WorkflowListSlider() {
+  const reduceMotion = useReducedMotion();
+
+  /* ---------- HEADER CAROUSEL ---------- */
+  const headerPhrases = [
+    "workflow automation",
+    "task orchestration",
+    "handoff routing",
+    "approval tracking",
+    "ops control tower",
+  ];
+
+  const HEADER_ROW_H = 18; // px
+  const headerLoopDistance = HEADER_ROW_H * headerPhrases.length;
+
+  /* ---------- TASK DATA ---------- */
   const allTasks: TaskItem[] = [
     { title: "Payroll management", subtitle: "Due on 2nd July", icon: <DollarSign className="h-4 w-4 text-white/80" />, status: "waiting" },
     { title: "Employee Tracking", subtitle: "2 days ago", icon: <Users2 className="h-4 w-4 text-white/80" />, status: "done" },
@@ -51,7 +66,7 @@ export default function WorkflowListSlider() {
 
   const [index, setIndex] = useState(0);
 
-  const ROW_H = 72; // px
+  const ROW_H = 72;
   const VISIBLE_ROWS = 4;
 
   useEffect(() => setIndex(0), [tab]);
@@ -61,8 +76,7 @@ export default function WorkflowListSlider() {
     const t = window.setInterval(() => {
       setIndex((i) => {
         const maxIndex = items.length - VISIBLE_ROWS;
-        const next = i + 1;
-        return next > maxIndex ? 0 : next;
+        return i + 1 > maxIndex ? 0 : i + 1;
       });
     }, 3500);
     return () => window.clearInterval(t);
@@ -75,53 +89,80 @@ export default function WorkflowListSlider() {
 
   return (
     <div className="rounded-3xl border border-white/10 bg-white/5 p-5 shadow-2xl shadow-purple-900/20">
+      {/* ---------- HEADER ---------- */}
       <div className="flex items-center justify-between">
         <div className="inline-flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-purple-500/15 ring-1 ring-white/10">
             <Sparkles className="h-4 w-4" />
           </div>
+
           <div>
-            <div className="text-sm font-semibold">workflow automation · Primary</div>
+            <div className="text-sm font-semibold flex items-center gap-1">
+              <div className="relative h-[18px] overflow-hidden">
+                {reduceMotion ? (
+                  <div className="h-[18px] leading-[18px]">
+                    workflow automation
+                  </div>
+                ) : (
+                  <motion.div
+                    className="flex flex-col"
+                    animate={{ y: [0, -headerLoopDistance] }}
+                    transition={{
+                      duration: headerPhrases.length * 1.2,
+                      ease: "linear",
+                      repeat: Infinity,
+                    }}
+                  >
+                    {[...headerPhrases, ...headerPhrases].map((text, i) => (
+                      <div
+                        key={`${text}-${i}`}
+                        className="h-[18px] leading-[18px]"
+                      >
+                        {text}
+                      </div>
+                    ))}
+                  </motion.div>
+                )}
+              </div>
+
+              <span className="text-white/70">· Primary</span>
+            </div>
+
             <div className="text-xs text-white/60">Live task flow</div>
           </div>
         </div>
 
         <div className="flex items-center gap-2">
           <button
-            type="button"
             onClick={up}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-40"
             disabled={index === 0}
-            aria-label="Scroll up"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-40"
           >
             <ChevronUp className="h-4 w-4" />
           </button>
           <button
-            type="button"
             onClick={down}
-            className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-40"
             disabled={index === maxIndex}
-            aria-label="Scroll down"
+            className="inline-flex h-9 w-9 items-center justify-center rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 disabled:opacity-40"
           >
             <ChevronDown className="h-4 w-4" />
           </button>
         </div>
       </div>
 
+      {/* ---------- TABS ---------- */}
       <div className="mt-4 flex w-full items-center gap-2 rounded-2xl border border-white/10 bg-black/20 p-1">
         <button
-          type="button"
           onClick={() => setTab("all")}
-          className={`flex-1 rounded-xl px-3 py-2 text-sm transition ${
+          className={`flex-1 rounded-xl px-3 py-2 text-sm ${
             tab === "all" ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
           }`}
         >
           All Tasks
         </button>
         <button
-          type="button"
           onClick={() => setTab("waiting")}
-          className={`flex-1 rounded-xl px-3 py-2 text-sm transition ${
+          className={`flex-1 rounded-xl px-3 py-2 text-sm ${
             tab === "waiting" ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
           }`}
         >
@@ -129,9 +170,14 @@ export default function WorkflowListSlider() {
         </button>
       </div>
 
+      {/* ---------- TASK LIST ---------- */}
       <div className="mt-4 rounded-2xl border border-white/10 bg-black/20 p-2">
-        <div className="relative overflow-hidden rounded-xl" style={{ height: ROW_H * VISIBLE_ROWS }}>
+        <div
+          className="relative overflow-hidden rounded-xl"
+          style={{ height: ROW_H * VISIBLE_ROWS }}
+        >
           <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black/30 via-transparent to-black/30" />
+
           <motion.div
             animate={{ y: -index * ROW_H }}
             transition={{ type: "spring", stiffness: 280, damping: 28 }}
@@ -146,21 +192,19 @@ export default function WorkflowListSlider() {
                   <div className="mt-0.5 flex h-9 w-9 items-center justify-center rounded-2xl bg-black/30 ring-1 ring-white/10">
                     {t.icon}
                   </div>
-                  <div className="leading-tight">
+                  <div>
                     <div className="text-sm font-semibold">{t.title}</div>
                     <div className="mt-1 text-xs text-white/60">{t.subtitle}</div>
                   </div>
                 </div>
-
-                <div className="flex items-center gap-2">
-                  <StatusIcon status={t.status} />
-                </div>
+                <StatusIcon status={t.status} />
               </div>
             ))}
           </motion.div>
         </div>
       </div>
 
+      {/* ---------- FOOTER ---------- */}
       <div className="mt-3 flex items-center justify-between text-[11px] text-white/60">
         <span>
           Showing <span className="text-white/80">{VISIBLE_ROWS}</span> of{" "}
