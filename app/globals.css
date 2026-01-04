@@ -123,3 +123,14 @@
     @apply bg-background text-foreground;
   }
 }
+/* ===== Global background + scroll stability ===== */
+
+html,
+body {
+  background-color: #05010f;
+  overscroll-behavior: none;
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+}
