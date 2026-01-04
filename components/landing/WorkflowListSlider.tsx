@@ -63,7 +63,7 @@ export default function WorkflowListSlider() {
   const distance = items.length * ROW_H + Math.max(0, items.length - 1) * ROW_GAP;
 
   // Speed (higher = faster)
-  const PX_PER_SEC = 50;
+  const PX_PER_SEC = 25;
   const duration = Math.max(6, distance / PX_PER_SEC);
 
   // Only animate when allowed + when there are enough items
