@@ -66,19 +66,6 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
@@ -100,19 +87,6 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.205 0 0);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.269 0 0);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
@@ -125,51 +99,49 @@
 }
 
 /* ============================================================
-   Magic-style orb layout (blue moved to bottom)
-   Two modes only:
-   - default (dark)
-   - html.glow-lite (light)
-   Keeps iOS smooth: gradients only, no blur filters on huge layers.
-   Pull-to-refresh restored.
+   MAGIC-LIKE: darker base + sharper/tighter glow placement
+   - default = dark
+   - html.glow-lite = brighter
+   iOS-safe: gradients only (no blur filters on giant layers)
+   pull-to-refresh restored
 ============================================================ */
 
-/* DARK (default) */
+/* DARK (default): TRUE darker base */
 html {
   background:
-    /* Purple orb: top-left like Magic */
-    radial-gradient(1100px 900px at 12% 12%, rgba(140, 60, 255, 0.62), transparent 62%),
+    /* Tight purple orb near top-left of content column */
+    radial-gradient(820px 620px at 28% 12%, rgba(140, 60, 255, 0.72), transparent 54%),
 
-    /* Magenta orb: upper mid for richness */
-    radial-gradient(900px 700px at 55% 18%, rgba(255, 70, 230, 0.20), transparent 62%),
+    /* Tight magenta orb near top-center */
+    radial-gradient(760px 560px at 52% 16%, rgba(255, 70, 230, 0.22), transparent 56%),
 
-    /* Blue orb: bottom-center (your request) */
-    radial-gradient(1100px 900px at 55% 92%, rgba(90, 120, 255, 0.22), transparent 68%),
+    /* Blue orb moved to bottom-center (tight) */
+    radial-gradient(900px 680px at 52% 92%, rgba(90, 120, 255, 0.24), transparent 60%),
 
-    /* Deep purple haze: bottom-left (Magic vibe) */
-    radial-gradient(1300px 1000px at 18% 92%, rgba(140, 60, 255, 0.12), transparent 72%),
+    /* Bottom-left purple haze (subtle) */
+    radial-gradient(980px 760px at 30% 92%, rgba(140, 60, 255, 0.10), transparent 68%),
 
-    /* Base */
-    #03010a;
+    /* Base black */
+    #000000;
 
-  /* allow pull-to-refresh */
   overscroll-behavior-y: auto;
   overscroll-behavior-x: none;
 }
 
-/* LIGHT (toggle) — brighter orbs */
+/* LIGHT (toggle): brighter, more saturated */
 html.glow-lite {
   background:
-    radial-gradient(1300px 1050px at 12% 12%, rgba(140, 60, 255, 0.92), transparent 62%),
-    radial-gradient(1100px 850px at 55% 18%, rgba(255, 70, 230, 0.40), transparent 62%),
-    radial-gradient(1300px 1050px at 55% 92%, rgba(90, 120, 255, 0.44), transparent 68%),
-    radial-gradient(1500px 1200px at 18% 92%, rgba(140, 60, 255, 0.22), transparent 72%),
-    #03010a;
+    radial-gradient(900px 680px at 28% 12%, rgba(140, 60, 255, 0.98), transparent 54%),
+    radial-gradient(820px 620px at 52% 16%, rgba(255, 70, 230, 0.42), transparent 56%),
+    radial-gradient(1000px 760px at 52% 92%, rgba(90, 120, 255, 0.46), transparent 60%),
+    radial-gradient(1100px 860px at 30% 92%, rgba(140, 60, 255, 0.18), transparent 68%),
+    #000000;
 
   overscroll-behavior-y: auto;
   overscroll-behavior-x: none;
 }
 
-/* Film/vignette blend layer (premium “Magic” feel) — no blur */
+/* Film/vignette layer to make it feel “tight” like Magic */
 body::before {
   content: "";
   position: fixed;
@@ -178,10 +150,10 @@ body::before {
   z-index: 0;
 
   background:
-    /* vignette keeps edges rich/dark */
-    radial-gradient(1400px 1100px at 50% 50%, rgba(0,0,0,0.00), rgba(0,0,0,0.38)),
-    /* gentle extra bloom to unify */
-    radial-gradient(1200px 900px at 50% 10%, rgba(140, 60, 255, 0.10), transparent 62%);
+    /* vignette keeps edges dark and makes glow feel tighter */
+    radial-gradient(1400px 1200px at 50% 50%, rgba(0,0,0,0.00), rgba(0,0,0,0.44)),
+    /* micro-bloom to unify without blur */
+    radial-gradient(900px 650px at 50% 10%, rgba(140, 60, 255, 0.10), transparent 62%);
 
   transform: translateZ(0);
 }
