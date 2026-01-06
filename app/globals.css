@@ -48,8 +48,6 @@
 
 :root {
   --radius: 0.625rem;
-
-  /* Light tokens (unused — dark is forced globally) */
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
   --card: oklch(1 0 0);
@@ -68,6 +66,19 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
 }
 
 .dark {
@@ -89,32 +100,57 @@
   --border: oklch(1 0 0 / 10%);
   --input: oklch(1 0 0 / 15%);
   --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
 }
 
 @layer base {
   * {
     @apply border-border outline-ring/50;
   }
-
   body {
     @apply bg-transparent text-foreground;
   }
 }
 
-/* ===== Magic-style glow (bright, smooth, iOS-safe) ===== */
+/* ===== Magic-style vibrant glow (2 modes) + pull-to-refresh restored ===== */
 
+/* DARK (default): darker base + sharper bloom */
 html {
   background:
-    radial-gradient(1100px 720px at 50% 6%, rgba(168, 85, 247, 0.65), transparent 62%),
-    radial-gradient(900px 700px at 12% 28%, rgba(217, 70, 239, 0.38), transparent 60%),
-    radial-gradient(900px 700px at 88% 22%, rgba(99, 102, 241, 0.34), transparent 60%),
-    radial-gradient(1100px 900px at 55% 78%, rgba(168, 85, 247, 0.24), transparent 70%),
-    #05010f;
+    radial-gradient(1200px 760px at 55% 8%, rgba(140, 60, 255, 0.72), transparent 58%),
+    radial-gradient(980px 760px at 18% 22%, rgba(255, 70, 230, 0.26), transparent 60%),
+    radial-gradient(980px 760px at 88% 18%, rgba(90, 120, 255, 0.22), transparent 60%),
+    radial-gradient(1400px 980px at 50% 92%, rgba(140, 60, 255, 0.10), transparent 72%),
+    #03010a;
 
-  overscroll-behavior: none;
+  /* allow pull-to-refresh */
+  overscroll-behavior-y: auto;
+  overscroll-behavior-x: none;
 }
 
-/* Subtle glow film — no blur, no jank */
+/* LIGHT (toggle): brighter + more saturated bloom */
+html.glow-lite {
+  background:
+    radial-gradient(1400px 920px at 55% 8%, rgba(140, 60, 255, 0.98), transparent 58%),
+    radial-gradient(1100px 900px at 18% 22%, rgba(255, 70, 230, 0.48), transparent 60%),
+    radial-gradient(1100px 900px at 88% 18%, rgba(90, 120, 255, 0.40), transparent 60%),
+    radial-gradient(1600px 1100px at 50% 92%, rgba(140, 60, 255, 0.20), transparent 72%),
+    #03010a;
+}
+
+/* glow film (NO blur) – stays smooth on iOS */
 body::before {
   content: "";
   position: fixed;
@@ -122,39 +158,10 @@ body::before {
   pointer-events: none;
   z-index: 0;
   background:
-    radial-gradient(1200px 800px at 50% 10%, rgba(168, 85, 247, 0.20), transparent 60%),
-    radial-gradient(1000px 800px at 20% 35%, rgba(217, 70, 239, 0.12), transparent 62%),
-    radial-gradient(1000px 800px at 80% 30%, rgba(99, 102, 241, 0.12), transparent 62%);
+    radial-gradient(1200px 800px at 55% 12%, rgba(140, 60, 255, 0.14), transparent 62%),
+    radial-gradient(1000px 820px at 22% 35%, rgba(255, 70, 230, 0.08), transparent 66%),
+    radial-gradient(1000px 820px at 82% 28%, rgba(90, 120, 255, 0.08), transparent 66%);
   transform: translateZ(0);
-}
-
-body {
-  background: transparent;
-  -webkit-overflow-scrolling: touch;
-}
-
-/* ===== Glow modes (Dark vs Light) — safe on iOS (gradients only) ===== */
-
-/* Default = DARK glow */
-html {
-  background:
-    radial-gradient(1100px 720px at 50% 6%, rgba(168, 85, 247, 0.42), transparent 62%),
-    radial-gradient(900px 700px at 12% 28%, rgba(217, 70, 239, 0.22), transparent 60%),
-    radial-gradient(900px 700px at 88% 22%, rgba(99, 102, 241, 0.20), transparent 60%),
-    radial-gradient(1100px 900px at 55% 78%, rgba(168, 85, 247, 0.14), transparent 70%),
-    #05010f;
-  overscroll-behavior-y: auto;
-  overscroll-behavior-x: none;
-}
-
-/* LIGHT glow mode (brighter like Magic) */
-html.glow-lite {
-  background:
-    radial-gradient(1100px 720px at 50% 6%, rgba(168, 85, 247, 0.70), transparent 62%),
-    radial-gradient(900px 700px at 12% 28%, rgba(217, 70, 239, 0.40), transparent 60%),
-    radial-gradient(900px 700px at 88% 22%, rgba(99, 102, 241, 0.36), transparent 60%),
-    radial-gradient(1100px 900px at 55% 78%, rgba(168, 85, 247, 0.24), transparent 70%),
-    #05010f;
 }
 
 body {

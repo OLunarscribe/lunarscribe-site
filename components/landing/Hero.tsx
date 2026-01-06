@@ -25,7 +25,6 @@ export default function Hero() {
             transition={{ duration: 0.45 }}
             className="mb-5"
           >
-            {/* Replaces the old “New / Ship faster…” pill */}
             <GlowModeToggle />
           </motion.div>
 

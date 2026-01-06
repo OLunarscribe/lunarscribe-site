@@ -12,8 +12,6 @@ export default function GlowModeToggle() {
     const saved = window.localStorage.getItem("glowMode");
     const initial: GlowMode = saved === "light" ? "light" : "dark";
     setMode(initial);
-
-    // We keep the UI in dark theme always, and only toggle glow intensity.
     document.documentElement.classList.toggle("glow-lite", initial === "light");
   }, []);
 
@@ -31,7 +29,7 @@ export default function GlowModeToggle() {
         className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 transition ${
           mode === "dark" ? "bg-white/10" : "hover:bg-white/5"
         }`}
-        aria-label="Dark glow"
+        aria-label="Dark mode"
       >
         <Moon className="h-3.5 w-3.5" />
         Dark
@@ -43,7 +41,7 @@ export default function GlowModeToggle() {
         className={`inline-flex items-center gap-1.5 rounded-full px-2 py-1 transition ${
           mode === "light" ? "bg-white/10" : "hover:bg-white/5"
         }`}
-        aria-label="Light glow"
+        aria-label="Light mode"
       >
         <Sun className="h-3.5 w-3.5" />
         Light
