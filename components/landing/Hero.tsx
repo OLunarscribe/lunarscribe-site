@@ -3,9 +3,9 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Shield } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import WorkflowListSlider from "@/components/landing/WorkflowListSlider";
+import GlowModeToggle from "@/components/landing/GlowModeToggle";
 
 export default function Hero() {
   const quickStats = [
@@ -16,26 +16,24 @@ export default function Hero() {
   ];
 
   return (
-    <section className="mx-auto max-w-6xl px-6 pt-12 md:pt-16">
+    <section className="mx-auto max-w-6xl px-6 pt-10 md:pt-14">
       <div className="grid items-center gap-10 md:grid-cols-2">
         <div>
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.45 }}
-            className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-white/70"
+            className="mb-5"
           >
-            <Badge className="bg-purple-500/20 text-purple-100 hover:bg-purple-500/20">
-              New
-            </Badge>
-            Ship faster with fewer tools
+            {/* Replaces the old “New / Ship faster…” pill */}
+            <GlowModeToggle />
           </motion.div>
 
           <motion.h1
             initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.55, delay: 0.05 }}
-            className="mt-5 text-4xl font-semibold tracking-tight md:text-5xl"
+            className="mt-2 text-4xl font-semibold tracking-tight md:text-5xl"
           >
             Turn messy execution into a{" "}
             <span className="text-purple-200">single source of truth</span>.
@@ -90,7 +88,6 @@ export default function Hero() {
           className="relative"
         >
           <WorkflowListSlider />
-          <div className="pointer-events-none absolute -bottom-6 -right-6 hidden h-24 w-24 rounded-3xl bg-purple-500/20 blur-2xl md:block" />
         </motion.div>
       </div>
     </section>
